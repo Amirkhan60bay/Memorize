@@ -8,12 +8,19 @@
 
 import SwiftUI
 
-class EmojiMemoryGame {
-    private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
+class EmojiMemoryGame: ObservableObject {
+    
+    // Why we need @Published? @Published is the property wrapper
+    // Everytime the model changes, it must call objectWillChange.send(), and @Published calls it automatically
+    
+    @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
         
     static func createMemoryGame() -> MemoryGame<String> {
-        let emojis = ["👻","🎃","🕷"]
-        return MemoryGame<String>(numberOfPairsOfCards: emojis.count) {
+        var emojis = ["👻","🎃","🕷","🧛🏻‍♂️","💀"]
+        // MARK: - TASK 4
+        emojis.shuffle()
+        let random = Int.random(in: 2...5)
+        return MemoryGame<String>(numberOfPairsOfCards: random) {
             pairIndex in emojis[pairIndex]
         }
     }
