@@ -14,18 +14,23 @@ class EmojiMemoryGame: ObservableObject {
     // Everytime the model changes, it must call objectWillChange.send(), and @Published calls it automatically
     
     @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
+    
+    private static func createMemoryGame() -> MemoryGame<String> {
         
-    static func createMemoryGame() -> MemoryGame<String> {
-        var emojis = ["👻","🎃","🕷","🧛🏻‍♂️","💀"]
-        // MARK: - TASK 4
+        let theme = Theme()
+        var emojis = theme.emojis
+//        // MARK: - TASK 4
         emojis.shuffle()
-        let random = Int.random(in: 2...5)
-        return MemoryGame<String>(numberOfPairsOfCards: random) {
+        return MemoryGame<String>(with: theme) {
             pairIndex in emojis[pairIndex]
         }
     }
     
+    
     // MARK: - Access to the Model
+    lazy var theme = model.theme
+    
+    lazy var score = model.score
     
     var cards: Array<MemoryGame<String>.Card> {
         model.cards
@@ -35,5 +40,12 @@ class EmojiMemoryGame: ObservableObject {
     
     func choose(card: MemoryGame<String>.Card){
         model.choose(card: card)
+        score = model.score
+    }
+    
+    func newGame(){
+        model = EmojiMemoryGame.createMemoryGame()
+        self.theme = model.theme
+        self.score = model.score 
     }
 }
